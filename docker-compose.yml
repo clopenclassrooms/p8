@@ -1,0 +1,38 @@
+version: '2'
+
+services:
+  myapp:
+    image: 'bitnami/symfony:1'
+    container_name: symfony_p8
+    ports:
+      - '8000:8000'
+    volumes:
+      - '${PROJECT_PATH}:/app'
+    environment:
+      - SYMFONY_PROJECT_NAME=p8
+      - MARIADB_HOST=mariadb
+      - MARIADB_PORT_NUMBER=3306
+      - MARIADB_USER=bobby
+      - MARIADB_PASSWORD=tables
+      - MARIADB_DATABASE=bilemo
+    depends_on:
+      - mariadb
+  mariadb:
+    image: 'bitnami/mariadb:10.3'
+    container_name: mariadb_p8
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=bobby
+      - MARIADB_PASSWORD=tables
+      - MARIADB_DATABASE=todoandco
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_p8
+    links:
+      - mariadb
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - 8001:80
