@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Task;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,37 +16,36 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TaskRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $userRepository;
+
+    public function __construct(ManagerRegistry $registry,UserRepository $userRepository)
     {
         parent::__construct($registry, Task::class);
+        $this->userRepository = $userRepository;
     }
 
-    // /**
-    //  * @return Task[] Returns an array of Task objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function addAnonymousUserIfNeeded(Task $task)
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        if ($task->getUser() == null)
+        {
+            $task = $this->addAnonymousUser($task);
+        }
+        return $task;
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Task
+    public function addAnonymousUser(Task $task)
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $anonyme = $this->userRepository->findOneByUsername('Anonyme');
+        //check if user anonyme exist and if not, create it.
+        if ( !$anonyme)
+        {
+            $anonyme = new User;
+            $anonyme->setUsername('Anonyme');
+            $anonyme->setPassword('');
+            $anonyme->setEmail('');
+            $anonyme->setRoles(["ROLE_USER"]);
+        }
+        $task->setUser($anonyme);
+        return $task;
     }
-    */
 }
