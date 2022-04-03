@@ -25,7 +25,7 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/create", name="task_create")
      */
-    public function createAction(TaskRepository $taskRepository, UserRepository $userRepository, Request $request)
+    public function createAction(TaskRepository $taskRepository, Request $request)
     {
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
