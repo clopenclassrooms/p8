@@ -58,7 +58,7 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/{id}/edit", name="task_edit")
      */
-    public function editAction($id, UserRepository $userRepository, TaskRepository $taskRepository, Request $request)
+    public function editAction($id, TaskRepository $taskRepository, Request $request)
     {
         $task = $taskRepository->find($id);
         $task = $taskRepository->addAnonymousUserIfNeeded($task);
