@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,15 +17,15 @@ class UserController extends AbstractController
     /**
      * @Route("/users", name="user_list")
      */
-    public function listAction()
+    public function listAction(UserRepository $userRepository)
     {
-        return $this->render('user/list.html.twig', ['users' => $this->getDoctrine()->getRepository('App:User')->findAll()]);
+        return $this->render('user/list.html.twig', ['users' => $userRepository->findAll()]);
     }
 
     /**
      * @Route("/users/create", name="user_create")
      */
-    public function createAction(Request $request, UserPasswordHasherInterface $passwordHasher)
+    public function createAction(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $objectManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $user = new User();
@@ -32,7 +34,6 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
             $password = $passwordHasher->hashPassword(
                 $user,
                 $user->getPassword()
@@ -40,8 +41,8 @@ class UserController extends AbstractController
             //$password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
 
-            $em->persist($user);
-            $em->flush();
+            $objectManager->persist($user);
+            $objectManager->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été ajouté.");
 
@@ -55,7 +56,7 @@ class UserController extends AbstractController
      * @Route("/users/{id}/edit", name="user_edit")
      * 
      */
-    public function editAction($id, UserRepository $userRepository, Request $request,UserPasswordHasherInterface $passwordHasher)
+    public function editAction($id, UserRepository $userRepository, Request $request,UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $objectManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -67,8 +68,8 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($password);
-
-            $this->getDoctrine()->getManager()->flush();
+            $objectManager->persist($user);
+            $objectManager->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été modifié");
 

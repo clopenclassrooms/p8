@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,15 +18,15 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks", name="task_list")
      */
-    public function listAction()
+    public function listAction(TaskRepository $taskRepository)
     {
-        return $this->render('task/list.html.twig', ['tasks' => $this->getDoctrine()->getRepository('App:Task')->findAll()]);
+        return $this->render('task/list.html.twig', ['tasks' => $taskRepository->findAll()]);
     }
 
     /**
      * @Route("/tasks/create", name="task_create")
      */
-    public function createAction(TaskRepository $taskRepository, Request $request)
+    public function createAction(TaskRepository $taskRepository, Request $request, EntityManagerInterface $objectManager)
     {
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
@@ -42,10 +43,8 @@ class TaskController extends AbstractController
                 $task->setUser($this->getUser());
             }
             
-            $em = $this->getDoctrine()->getManager();
-
-            $em->persist($task);
-            $em->flush();
+            $objectManager->persist($task);
+            $objectManager->flush();
 
             $this->addFlash('success', 'La tâche a été bien été ajoutée.');
 
@@ -58,7 +57,7 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/{id}/edit", name="task_edit")
      */
-    public function editAction($id, TaskRepository $taskRepository, Request $request)
+    public function editAction($id, TaskRepository $taskRepository, Request $request, EntityManagerInterface $objectManager)
     {
         $task = $taskRepository->find($id);
         $task = $taskRepository->addAnonymousUserIfNeeded($task);
@@ -67,7 +66,8 @@ class TaskController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $objectManager->persist($task);
+            $objectManager->flush();
 
             $this->addFlash('success', 'La tâche a bien été modifiée.');
 
@@ -97,23 +97,22 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/{id}/delete", name="task_delete")
      */
-    public function deleteTaskAction($id,UserRepository $userRepository, TaskRepository $taskRepository, Request $request)
+    public function deleteTaskAction($id,UserRepository $userRepository, TaskRepository $taskRepository, Request $request, EntityManagerInterface $objectManager)
     {
         $task = $taskRepository->find($id);
         if (
             ($task->getUser() == $this->getUser()) or
             (
                 (
-                    ( $task->getUser() == null ) or
-                    ( $task->getUser() == $userRepository->findOneByUsername('Anonyme') )
+                    ( $task->getUser() == $userRepository->findOneByUsername('anonymous') ) or
+                    ( is_null($task->getUser()) ) 
                 ) and
                 $this->isGranted('ROLE_ADMIN')
             )
            )
         {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($task);
-            $em->flush();
+            $objectManager->remove($task);
+            $objectManager->flush();
             $this->addFlash('success', 'La tâche a bien été supprimée.');
         }else{
             $request->getSession()->getFlashBag()->add('error', 'Vous ne pouvez pas supprimer une tâche créé par un autre utilisateur.');
