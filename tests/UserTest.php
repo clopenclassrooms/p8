@@ -26,7 +26,7 @@ class UserTest extends KernelTestCase
     /** @test */
     public function userTests(): void
     {
-        $kernel = self::bootKernel();
+        self::bootKernel();
 
         $task = new Task;
         $task->setTitle("Title");
