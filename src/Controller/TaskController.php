@@ -105,7 +105,7 @@ class TaskController extends AbstractController
             (
                 (
                     ( $task->getUser() == $userRepository->findOneByUsername('anonymous') ) or
-                    ( is_null($task->getUser()) ) 
+                    ( $task->getUser() === null ) 
                 ) and
                 $this->isGranted('ROLE_ADMIN')
             )
