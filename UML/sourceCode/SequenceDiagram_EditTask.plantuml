@@ -1,0 +1,18 @@
+@startuml
+    actor LoggedUser
+    entity router
+    entity TaskControler
+    entity Twig
+    entity Doctrine
+
+    LoggedUser -> router : I want modify this task
+    router -> TaskControler : editAction()
+    TaskControler -> Twig : Generate the \n task's page for modify task
+    Twig -> LoggedUser : The modify \n task's page
+    LoggedUser -> router : My data for modify task
+    router -> TaskControler : editAction()
+    TaskControler -> Doctrine : Modify these datas in the database
+    Doctrine -> TaskControler : Done
+    TaskControler -> Twig : Generate the html page
+    Twig -> LoggedUser : Html page
+@enduml

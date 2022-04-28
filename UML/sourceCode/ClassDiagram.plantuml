@@ -1,0 +1,103 @@
+@startuml
+
+entity Task
+{
+    - id
+    - createdAt
+    - title
+    - content
+    - isDone
+    - user
+
+    + __construct()
+    + getId()
+    + getCreatedAt()
+    + setCreatedAt()
+    + getTitle()
+    + setTitle()
+    + getContent()
+    + setContent()
+    + isDone()
+    + toggle()
+    + getUser()
+    + setUser()
+}
+entity User
+{
+    - id
+    - roles
+    - username
+    - password
+    - email
+    - tasks
+
+    + __construct()
+    + getId()
+    + getUsername()
+    + setUsername()
+    + getSalt()
+    + getPassword()
+    + setPassword()
+    + getEmail()
+    + setEmail()
+    + eraseCredentials()
+    + getUserIdentifier()
+    + getRoles()
+    + setRoles()
+    + getTasks()
+    + addTask()
+    + removeTask()
+}
+
+class DefaultController
+{
+    + homepage()
+}
+
+class SecurityController
+{
+    + login()
+    + logout()
+}
+
+class TaskController
+{
+    + listAction()
+    + createAction()
+    + editAction()
+    + toggleTaskAction()
+    + deleteTaskAction()
+}
+
+class UserController
+{
+    + listAction()
+    + createAction()
+    + editAction()
+}
+
+class AppFixtures
+{
+    + __construct()
+    + load()
+    + addTasks()
+    + addUsers()
+}
+
+class TaskRepository
+{
+    + __construct()
+    + addAnonymousUserIfNeeded()
+    + addAnonymousUser()
+}
+
+class FonctionnelsTasksTest
+{
+    + testTaskCreation()
+    + testTaskCreationWithNotConnectUser()
+    + testTaskEdition
+    + testTaskAdminEditionForNotConnectedUser()
+    + testUserDeleteTask()
+}
+
+@enduml
