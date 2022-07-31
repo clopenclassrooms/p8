@@ -1,0 +1,14 @@
+@startuml
+    actor LoggedUser
+    entity router
+    entity TaskControler
+    entity Twig
+    entity Doctrine
+
+    LoggedUser -> router : I want a list of tasks
+    router -> TaskControler : listAction()
+    TaskControler -> Doctrine : give me the list of the task
+    Doctrine -> TaskControler : Done
+    TaskControler -> Twig : Generate the html page
+    Twig -> LoggedUser : Html page
+@enduml

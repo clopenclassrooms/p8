@@ -1,0 +1,18 @@
+@startuml
+    actor AdminUser
+    entity router
+    entity UserControler
+    entity Twig
+    entity Doctrine
+
+    AdminUser -> router : I want edit this user
+    router -> UserControler : editAction()
+    UserControler -> Twig : generate html page \nfor user edition
+    Twig -> AdminUser : html page
+    AdminUser -> router : Informations for user edition
+    router -> UserControler : editAction()
+    UserControler -> Doctrine : modify these data in database
+    Doctrine -> UserControler : Done
+    UserControler -> Twig : Generate the html page
+    Twig -> AdminUser : Html page
+@enduml

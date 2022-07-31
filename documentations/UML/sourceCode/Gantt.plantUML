@@ -1,0 +1,21 @@
+@startgantt
+[Diagramme UML] lasts 1 days
+[Documentations] lasts 1 days
+[PHPUnit] lasts 3 days
+[Migration vers symfony 5.4] lasts 2 days
+[Nouvelles fonctionnalités] lasts 2 days
+[Correction d'anomalies] lasts 2 days
+[Codacy] lasts 1 days
+[Audit de performance] lasts 1 days
+
+[Documentations] starts at [Diagramme UML]'s end
+[PHPUnit] starts at [Diagramme UML]'s end
+[Migration vers symfony 5.4] starts at [Diagramme UML]'s end
+
+[Nouvelles fonctionnalités] starts at [Migration vers symfony 5.4]'s end
+[Correction d'anomalies] starts at [Migration vers symfony 5.4]'s end
+[Codacy] starts at [Correction d'anomalies]'s end
+[Codacy] starts at [Nouvelles fonctionnalités]'s end
+[Audit de performance] starts at [Codacy]'s end
+
+@endgantt
