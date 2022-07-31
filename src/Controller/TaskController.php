@@ -28,6 +28,7 @@ class TaskController extends AbstractController
      */
     public function createAction(TaskRepository $taskRepository, Request $request, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
 
@@ -59,6 +60,7 @@ class TaskController extends AbstractController
      */
     public function editAction($id, TaskRepository $taskRepository, Request $request, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $task = $taskRepository->find($id);
         $task = $taskRepository->addAnonymousUserIfNeeded($task);
         $form = $this->createForm(TaskType::class, $task);
@@ -99,6 +101,7 @@ class TaskController extends AbstractController
      */
     public function deleteTaskAction($id,UserRepository $userRepository, TaskRepository $taskRepository, Request $request, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $task = $taskRepository->find($id);
         if (
             ($task->getUser() == $this->getUser()) or

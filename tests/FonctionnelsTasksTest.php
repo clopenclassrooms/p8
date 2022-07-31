@@ -25,11 +25,10 @@ class FonctionnelsTasksTest extends WebTestCase
     {
         $this->init();
         $this->loadHomePage();
-        $this->loadCreateNewTask();
-        $this->addOrEditTask('test create task with not connected user', 'test create task with not connected user', true);
-
-        $this->assertSame(1, $this->_crawler->filter('html:contains("La tâche a été bien été ajoutée.")')->count());
-        $this->assertSame(1, $this->_crawler->filter('html:contains("test create task with not connected user")')->count());               
+        $link = $this->_crawler->selectLink('Créer une nouvelle tâche')->link();
+        $this->_crawler = $this->_client->click($link);
+        $this->_client->followRedirects();
+        $this->assertResponseRedirects('http://localhost/login');              
     }
 
     public function testTaskEdition(): void
