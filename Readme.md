@@ -1,6 +1,6 @@
 ## Installation
 
-Installation prerequisites : 
+Installation prerequisites :
 * docker installed
 
 Commande line :
@@ -30,18 +30,18 @@ php bin/console doctrine:fixtures:load
 
 ## access to Website
 
-Website : 
+Website :
 * http://localhost
 
 Admin account :
 * admin/admin
 
-User account : 
+User account :
 * user1/user1
 * user2/user2
 
 ## access to PhpMyAdmin
-PhpMyAdmin : 
+PhpMyAdmin :
 * http://localhost:8001
 
 Server : mariadb
