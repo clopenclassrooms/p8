@@ -67,15 +67,6 @@ Merci de vérifier la qualité de votre code via l'outil [Codacy](https://www.co
 
 Une fois réalisé, vous pouvez faire une demande d'intégration de code via un [pull request](https://github.com/clopenclassrooms/p8/pulls)
 
-### Structure de projet
-
-Le répertoire "/config" contient les principaux fichiers de configuration du projet.
-
-Le répertoire "/scr" contient le code source de l'application.
-Dans ce dernier, on y trouve :
-
--   les controleurs dans "/Controller"
-
 ### Authentification
 
 [Un document expliquant l'authentification](https://github.com/clopenclassrooms/p8/blob/master/documentations/Authentification.pdf)
