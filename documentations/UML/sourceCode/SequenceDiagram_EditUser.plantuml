@@ -7,6 +7,8 @@
 
     AdminUser -> router : I want edit this user
     router -> UserControler : editAction()
+    UserControler->Doctrine : give me the data
+    Doctrine->UserControler : the data
     UserControler -> Twig : generate html page \nfor user edition
     Twig -> AdminUser : html page
     AdminUser -> router : Informations for user edition

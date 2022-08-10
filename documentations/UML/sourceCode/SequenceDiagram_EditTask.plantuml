@@ -7,6 +7,8 @@
 
     LoggedUser -> router : I want modify this task
     router -> TaskControler : editAction()
+    TaskControler->Doctrine : give me the data
+    Doctrine->TaskControler : the data
     TaskControler -> Twig : Generate the \n task's page for modify task
     Twig -> LoggedUser : The modify \n task's page
     LoggedUser -> router : My data for modify task
