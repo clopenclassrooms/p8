@@ -20,7 +20,15 @@ class TaskController extends AbstractController
      */
     public function listAction(TaskRepository $taskRepository)
     {
-        return $this->render('task/list.html.twig', ['tasks' => $taskRepository->findAll()]);
+        return $this->render('task/list.html.twig', ['tasks' => $taskRepository->findByisDone(false)]);
+    }
+
+    /**
+     * @Route("/tasksDone", name="taskDone_list")
+     */
+    public function listDoneAction(TaskRepository $taskRepository)
+    {
+        return $this->render('task/list.html.twig', ['tasks' => $taskRepository->findByisDone(true)]);
     }
 
     /**
@@ -85,13 +93,24 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/{id}/toggle", name="task_toggle")
      */
-    public function toggleTaskAction()
+    public function toggleTaskAction($id, UserRepository $userRepository, EntityManagerInterface $objectManager, TaskRepository $taskRepository)
     {
-        $task = new Task;
-        $task->toggle(!$task->isDone());
-        $this->getDoctrine()->getManager()->flush();
-
-        $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $task = $taskRepository->find($id);
+        $task = $taskRepository->addAnonymousUserIfNeeded($task);
+        $userOfTheTask = $userRepository->find($task->getUser());
+        if (
+            $userOfTheTask === $this->getUser() or 
+            in_array("ROLE_ADMIN",$this->getUser()->getRoles())
+            )
+        {
+            $task->toggle(!$task->isDone());
+            $objectManager->persist($task);
+            $objectManager->flush();
+            $this->addFlash('success', sprintf('La tâche %s a bien modifier.', $task->getTitle()));
+        }else{
+            $this->addFlash('error', sprintf('Vous pouvez uniquement modifier une tâche qui vous appartient', $task->getTitle()));
+        }
 
         return $this->redirectToRoute('task_list');
     }
@@ -103,15 +122,10 @@ class TaskController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         $task = $taskRepository->find($id);
+        $task = $taskRepository->addAnonymousUserIfNeeded($task);
         if (
             ($task->getUser() == $this->getUser()) or
-            (
-                (
-                    ( $task->getUser() == $userRepository->findOneByUsername('anonymous') ) or
-                    ( $task->getUser() === null ) 
-                ) and
-                $this->isGranted('ROLE_ADMIN')
-            )
+            ($this->isGranted('ROLE_ADMIN'))
            )
         {
             $objectManager->remove($task);

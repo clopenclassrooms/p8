@@ -116,7 +116,7 @@ class FonctionnelsTasksTest extends WebTestCase
         $this->_client->followRedirects(); 
         $this->assertResponseIsSuccessful();
         
-        $this->assertSame(1, $this->_crawler->filter('html:contains("La tâche  a bien été marquée comme faite.")')->count());
+        $this->assertSame(1, $this->_crawler->filter('html:contains("La tâche Tache de user1 a bien modifier.")')->count());
     }
 
     public function init(): void

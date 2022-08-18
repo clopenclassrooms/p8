@@ -4,8 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Task;
 use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  *
@@ -17,11 +18,14 @@ use Doctrine\Persistence\ManagerRegistry;
 class TaskRepository extends ServiceEntityRepository
 {
     private $userRepository;
+    private $entityManager;
 
-    public function __construct(ManagerRegistry $registry,UserRepository $userRepository)
+    public function __construct(EntityManagerInterface $entityManager,ManagerRegistry $registry,UserRepository $userRepository)
     {
         parent::__construct($registry, Task::class);
         $this->userRepository = $userRepository;
+        $this->entityManager = $entityManager;
+
     }
 
     public function addAnonymousUserIfNeeded(Task $task)
@@ -46,6 +50,8 @@ class TaskRepository extends ServiceEntityRepository
             $anonyme->setRoles(["ROLE_USER"]);
         }
         $task->setUser($anonyme);
+        $this->entityManager->persist($task);
+        $this->entityManager->flush();
         return $task;
     }
 }
